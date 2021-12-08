@@ -1,10 +1,8 @@
 const express = require('express')
 const mongoose = require('mongoose')
 
-
-const userRoutes = require("./routes/user");
-const sauceRoutes = require("./routes/sauce");
-
+const userRoutes = require('./routes/user')
+const sauceRoutes = require('./routes/sauce')
 
 //Permet de se connecter à la base de données
 mongoose
@@ -16,7 +14,9 @@ mongoose
     }
   )
   .then(() => console.log('Connexion à MongoDB réussie !'))
-  .catch(() => console.log('Connexion à MongoDB échouée !'))
+  .catch((err) =>
+    console.log(`Connexion à MongoDB échouée. Message : ${err.message}`)
+  )
 
 const app = express() //initialise express
 

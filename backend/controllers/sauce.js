@@ -1,7 +1,11 @@
 const Sauce = require('../models/sauce')
+// file system (pour le fonction delete)
+const fs = require ('fs')
 
 exports.createSauce = (req, res, next) => {
-  //Récupère l'objet json de la sauce
+  //Récupère l'objet json de la sauce sous forme de form-data
+  //Le corps de la requête contien une chaîne sauce qui est un objet sauce converti en chaîne
+  // JSON.parse analyse cette chaîne pour obtenir un objet utilisable
   const sauceObject = JSON.parse(req.body.sauce)
   delete sauceObject._id
   const sauce = new Sauce({
@@ -55,7 +59,7 @@ exports.deleteSauce = (req, res, next) => {
       const filename = sauce.imageUrl.split('/images/')[1] //Récupère le nom du fichier précisément
       fs.unlink(`images/${filename}`, () => {
         //Supprime l'image du dossier images
-        Sauce.deleteOne({ _id: req.params.id }) //Supprime cette sauce identifiée avec cet Id
+        Sauce.deleteOne({ _id: req.params.id }) //Supprime la sauce identifiée avec cet Id
           .then(() => res.status(200).json({ message: 'Sauce supprimée !' }))
           .catch((error) => res.status(400).json({ error }))
       })

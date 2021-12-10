@@ -1,5 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
+// path, importation de Node qui donne accès au chemin des fichiers
+const path = require('path')
 
 const userRoutes = require('./routes/user')
 const sauceRoutes = require('./routes/sauce')
@@ -39,5 +41,11 @@ app.use((req, res, next) => {
 
 //Remplace body-parser et analyse le corps de la requête
 app.use(express.json())
+
+// ici on ne connait pas à l'avance le chemin du fichier, on utilise la méthode path
+//Pour chaque requête envoyé à images on sert ce dossier statique images
+app.use("/images", express.static(path.join(__dirname, 'images')));
+app.use("/api/auth", userRoutes);
+app.use("/api/sauces", sauceRoutes);
 
 module.exports = app

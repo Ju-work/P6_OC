@@ -2,8 +2,19 @@
 const bcrypt = require('bcrypt'); 
 //Permet de créer et vérifier les tokens d'authentification
 const jwt = require('jsonwebtoken'); 
+const emailValidator = require('email-validator')
+const passwordValidator = require('password-validator'); //Permet d'avoir des critères sur le password
 
 const User = require('../models/user');
+
+const schema = new passwordValidator(); //Configuration du modèle du password
+schema
+  .is().min(3) //longueur minimale de 3
+  .is().max(50) //longueur minimale de 50
+  .has().uppercase() //Majuscule obligatoire
+  .has().lowercase() //Minuscule obligatoire
+  .has().digits(1) // Au moins 1 chiffre
+  .has().not().spaces(); //Ne possède pas d'espace
 
 
 exports.signup = (req, res, next) => {
@@ -11,8 +22,8 @@ exports.signup = (req, res, next) => {
         return res.status(401).json({message: 'Veuillez entrer une adresse email valide'});
     }
 
-    if (!schema.validate(req.body.password)){ //Si le password n'est pas valide // au schema
-        return res.status(401).json({message: 'Le mot de passe doit avoir une longueur de 3 a 50 caractères avec au moins un chiffre, une minuscule, une majuscule et ne possédant pas d\'espace !!!'});
+   if (!schema.validate(req.body.password)){ //Si le password n'est pas valide // au schema
+       return res.status(401).json({message: 'Le mot de passe doit avoir une longueur de 3 a 50 caractères avec au moins un chiffre, une minuscule, une majuscule et ne possédant pas d\'espace !!!'});
     };
 
     
@@ -33,14 +44,17 @@ exports.signup = (req, res, next) => {
 
 
 exports.login = (req, res, next) => {
+    console.log("start login")
     User.findOne({email: req.body.email}) //Recherche l'email utilisateur dans la base de données
         .then(user => {
+            console.log("user not found");
             if(!user){ //S'il n'existe pas alors
                 return res.status(401).json({error: 'Utilisateur non trouvé !'});
             }
             bcrypt.compare(req.body.password, user.password) //Compare le password utilisateur avec celui enregistré dans la base de données
                 .then(valid => { 
                     if(!valid){ //Si différent alors
+                        console.log("user not valid");
                         return res.status(401).json({error: 'Mot de passe incorrect !'});
                     }
                     res.status(200).json({ //Sinon on renvoie cet objet

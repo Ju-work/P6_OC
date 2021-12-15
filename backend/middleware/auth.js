@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 
 
 module.exports = (req, res, next) => {
+  console.log("here !!!!!");
   try {
     //Récupère seulement le token du header authorization de la requête
     const token = req.headers.authorization.split(' ')[1] 

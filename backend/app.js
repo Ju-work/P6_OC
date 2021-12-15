@@ -2,6 +2,8 @@ const express = require('express')
 const mongoose = require('mongoose')
 // path, importation de Node qui donne accès au chemin des fichiers
 const path = require('path')
+const cors = require ('cors')
+const helmet = require("helmet");
 
 const userRoutes = require('./routes/user')
 const sauceRoutes = require('./routes/sauce')
@@ -22,22 +24,28 @@ mongoose
 
 const app = express() //initialise express
 
-app.use((req, res, next) => {
-  //accéder a l'API depuis n'importe quelle origine
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  //autorisation d'utiliser certains headers sur l'objet requête
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization'
-  )
-  //envoyer des requêtes avec les méthodes suivantes
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'GET, POST, PUT, DELETE, PATCH, OPTIONS'
-  )
-  // Passe l'exécution au middleware suivant
-  next()
-})
+app.use(helmet()); //Helmet aide à protéger l'application de certaines des vulnérabilités bien connues du Web en configurant de manière appropriée des en-têtes HTTP.
+
+
+app.use(cors({
+  origin: '*'
+}))
+// app.use((req, res, next) => {
+//   //accéder a l'API depuis n'importe quelle origine
+//   res.setHeader('Access-Control-Allow-Origin', '*')
+//   //autorisation d'utiliser certains headers sur l'objet requête
+//   res.setHeader(
+//     'Access-Control-Allow-Headers',
+//     'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization'
+//   )
+//   //envoyer des requêtes avec les méthodes suivantes
+//   res.setHeader(
+//     'Access-Control-Allow-Methods',
+//     'GET, POST, PUT, DELETE, PATCH, OPTIONS'
+//   )
+//   // Passe l'exécution au middleware suivant
+//   next()
+// })
 
 //Remplace body-parser et analyse le corps de la requête
 app.use(express.json())
